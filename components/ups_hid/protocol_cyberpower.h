@@ -53,13 +53,13 @@ class CyberPowerProtocol : public UpsProtocolBase {
   static const uint8_t BATTERY_CAPACITY_REPORT_ID = 0x07;  // Battery capacity limits
   static const uint8_t BATTERY_RUNTIME_REPORT_ID = 0x08;  // Battery % + Runtime
   static const uint8_t BATTERY_VOLTAGE_NOMINAL_REPORT_ID = 0x09;  // Battery voltage nominal
-  static const uint8_t BATTERY_VOLTAGE_REPORT_ID = 0x0a;  // Battery voltage
+  static const uint8_t BATTERY_VOLTAGE_REPORT_ID = 0x0b;  // Battery voltage (modified from 0x0a)
   static const uint8_t PRESENT_STATUS_REPORT_ID = 0x0b;   // Status bitmap
   static const uint8_t BEEPER_STATUS_REPORT_ID = 0x0c;    // Beeper status
   static const uint8_t INPUT_VOLTAGE_NOMINAL_REPORT_ID = 0x0e;  // Input voltage nominal
-  static const uint8_t INPUT_VOLTAGE_REPORT_ID = 0x0f;    // Input voltage  
-  static const uint8_t INPUT_TRANSFER_REPORT_ID = 0x10;   // Input transfer limits
-  static const uint8_t OUTPUT_VOLTAGE_REPORT_ID = 0x12;   // Output voltage
+  static const uint8_t INPUT_VOLTAGE_REPORT_ID = 0x0b;    // Input voltage (modified from 0x0f)
+  static const uint8_t INPUT_TRANSFER_REPORT_ID = 0x10;   // Input transfer limits, high is at 0x11
+  static const uint8_t OUTPUT_VOLTAGE_REPORT_ID = 0x0b;   // Output voltage (modified from 0x12)
   static const uint8_t LOAD_PERCENT_REPORT_ID = 0x13;     // Load percentage
   static const uint8_t DELAY_SHUTDOWN_REPORT_ID = 0x15;   // Delay before shutdown
   static const uint8_t DELAY_START_REPORT_ID = 0x16;      // Delay before startup
