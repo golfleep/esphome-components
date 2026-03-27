@@ -78,12 +78,12 @@ bool CyberPowerProtocol::read_data(UpsData &data) {
   bool success = false;
 
   // Core sensors (essential for operation)
-  // Read battery capacity limits (Report 0x07) - includes FullChargeCapacity for battery.status
-  HidReport battery_capacity_report;
-  if (read_hid_report(BATTERY_CAPACITY_REPORT_ID, battery_capacity_report)) {
-    parse_battery_capacity_report(battery_capacity_report, data);
-    success = true;
-  }
+  // Read battery capacity limits (Report 0x07) - Note: THIS VALUE IS NOT REQUIRED,battery_status is now set from charging state in parse_present_status_report
+  // HidReport battery_capacity_report;
+  // if (read_hid_report(BATTERY_CAPACITY_REPORT_ID, battery_capacity_report)) {
+  //   parse_battery_capacity_report(battery_capacity_report, data);
+  //   success = true;
+  // }
   
   // Read battery level and runtime (Report 0x08)
   HidReport battery_runtime_report;
@@ -99,14 +99,14 @@ bool CyberPowerProtocol::read_data(UpsData &data) {
     success = true;
   }
 
-  // Read input voltage (Report 0x0f)
+  // Read input voltage (Report 0x0b offset 24 size 8)
   HidReport input_voltage_report;
   if (read_hid_report(INPUT_VOLTAGE_REPORT_ID, input_voltage_report)) {
     parse_input_voltage_report(input_voltage_report, data);
     success = true;
   }
 
-  // Read output voltage (Report 0x12)
+  // Read output voltage (Report 0xb offset 32 size 8)
   HidReport output_voltage_report;
   if (read_hid_report(OUTPUT_VOLTAGE_REPORT_ID, output_voltage_report)) {
     parse_output_voltage_report(output_voltage_report, data);
@@ -121,58 +121,58 @@ bool CyberPowerProtocol::read_data(UpsData &data) {
   }
 
   // Additional sensors (enhance functionality)
-  // Read battery voltage (Report 0x0a) 
+  // Read battery voltage (Report 0x0b offset 0 size 16) 
   HidReport battery_voltage_report;
   if (read_hid_report(BATTERY_VOLTAGE_REPORT_ID, battery_voltage_report)) {
     parse_battery_voltage_report(battery_voltage_report, data);
   }
 
   // Read battery voltage nominal (Report 0x09)
-  HidReport battery_voltage_nominal_report;
-  if (read_hid_report(BATTERY_VOLTAGE_NOMINAL_REPORT_ID, battery_voltage_nominal_report)) {
-    parse_battery_voltage_nominal_report(battery_voltage_nominal_report, data);
-  }
+  // HidReport battery_voltage_nominal_report;
+  // if (read_hid_report(BATTERY_VOLTAGE_NOMINAL_REPORT_ID, battery_voltage_nominal_report)) {
+  //   parse_battery_voltage_nominal_report(battery_voltage_nominal_report, data);
+  // }
 
   // Read input voltage nominal (Report 0x0e)
-  HidReport input_voltage_nominal_report;
-  if (read_hid_report(INPUT_VOLTAGE_NOMINAL_REPORT_ID, input_voltage_nominal_report)) {
-    parse_input_voltage_nominal_report(input_voltage_nominal_report, data);
-  }
+  // HidReport input_voltage_nominal_report;
+  // if (read_hid_report(INPUT_VOLTAGE_NOMINAL_REPORT_ID, input_voltage_nominal_report)) {
+  //   parse_input_voltage_nominal_report(input_voltage_nominal_report, data);
+  // }
 
-  // Read input transfer limits (Report 0x10)
-  HidReport input_transfer_report;
-  if (read_hid_report(INPUT_TRANSFER_REPORT_ID, input_transfer_report)) {
-    parse_input_transfer_report(input_transfer_report, data);
-  }
+  // Read input transfer limits (Report 0x10 offset 0 size 8 and 0x11 offset 0 size 8)
+  // HidReport input_transfer_report;
+  // if (read_hid_report(INPUT_TRANSFER_REPORT_ID, input_transfer_report)) {
+  //   parse_input_transfer_report(input_transfer_report, data);
+  // }
 
   // Read delay settings (Reports 0x15, 0x16)
-  HidReport delay_shutdown_report;
-  if (read_hid_report(DELAY_SHUTDOWN_REPORT_ID, delay_shutdown_report)) {
-    parse_delay_shutdown_report(delay_shutdown_report, data);
-  }
+  // HidReport delay_shutdown_report;
+  // if (read_hid_report(DELAY_SHUTDOWN_REPORT_ID, delay_shutdown_report)) {
+  //   parse_delay_shutdown_report(delay_shutdown_report, data);
+  // }
 
-  HidReport delay_start_report;
-  if (read_hid_report(DELAY_START_REPORT_ID, delay_start_report)) {
-    parse_delay_start_report(delay_start_report, data);
-  }
+  // HidReport delay_start_report;
+  // if (read_hid_report(DELAY_START_REPORT_ID, delay_start_report)) {
+  //   parse_delay_start_report(delay_start_report, data);
+  // }
 
   // Read nominal power (Report 0x18)
-  HidReport realpower_nominal_report;
-  if (read_hid_report(REALPOWER_NOMINAL_REPORT_ID, realpower_nominal_report)) {
-    parse_realpower_nominal_report(realpower_nominal_report, data);
-  }
+  // HidReport realpower_nominal_report;
+  // if (read_hid_report(REALPOWER_NOMINAL_REPORT_ID, realpower_nominal_report)) {
+  //   parse_realpower_nominal_report(realpower_nominal_report, data);
+  // }
 
   // Read input sensitivity (Report 0x1a)
-  HidReport input_sensitivity_report;
-  if (read_hid_report(INPUT_SENSITIVITY_REPORT_ID, input_sensitivity_report)) {
-    parse_input_sensitivity_report(input_sensitivity_report, data);
-  }
+  // HidReport input_sensitivity_report;
+  // if (read_hid_report(INPUT_SENSITIVITY_REPORT_ID, input_sensitivity_report)) {
+  //   parse_input_sensitivity_report(input_sensitivity_report, data);
+  // }
 
   // Read overload status (Report 0x17)
-  HidReport overload_report;
-  if (read_hid_report(OVERLOAD_REPORT_ID, overload_report)) {
-    parse_overload_report(overload_report, data);
-  }
+  // HidReport overload_report;
+  // if (read_hid_report(OVERLOAD_REPORT_ID, overload_report)) {
+  //   parse_overload_report(overload_report, data);
+  // }
 
   // Read beeper status (Report 0x0c)
   HidReport beeper_status_report;
@@ -181,15 +181,15 @@ bool CyberPowerProtocol::read_data(UpsData &data) {
   }
 
   // Read device info (Reports 0x02, 0x1b) - these are string descriptors
-  HidReport serial_number_report;
-  if (read_hid_report(usb::REPORT_ID_SERIAL_NUMBER, serial_number_report)) {
-    parse_serial_number_report(serial_number_report, data);
-  }
+  // HidReport serial_number_report;
+  // if (read_hid_report(usb::REPORT_ID_SERIAL_NUMBER, serial_number_report)) {
+  //   parse_serial_number_report(serial_number_report, data);
+  // }
 
-  HidReport firmware_version_report;
-  if (read_hid_report(FIRMWARE_VERSION_REPORT_ID, firmware_version_report)) {
-    parse_firmware_version_report(firmware_version_report, data);
-  }
+  // HidReport firmware_version_report;
+  // if (read_hid_report(FIRMWARE_VERSION_REPORT_ID, firmware_version_report)) {
+  //   parse_firmware_version_report(firmware_version_report, data);
+  // }
 
   // Read test result (Report 0x14) - same report ID used for test commands
   HidReport test_result_report;
@@ -332,10 +332,11 @@ void CyberPowerProtocol::parse_battery_voltage_report(const HidReport &report, U
     return;
   }
 
-  // NUT debug shows: Report 0x0a, Offset 0, Size 8, Value: 24
+  // NUT debug shows: Report 0x0b, Offset 0, Size 16, MAY NEED COMBO uint16_t voltage_raw = report.data[1] | (report.data[2] << 8);
   // Current raw value: 0xF0 (240) should become 24V
   // So scaling factor is 24/240 = 0.1 (divide by 10)
-  uint8_t voltage_raw = report.data[1];
+  uint16_t voltage_raw = report.data[1] | (report.data[2] << 8);
+  // uint8_t voltage_raw = report.data[1];
   data.battery.voltage = static_cast<float>(voltage_raw) / battery::VOLTAGE_SCALE_FACTOR; // Scale by 0.1
   
   ESP_LOGD(CP_TAG, "Battery voltage: %.1fV (raw: 0x%02X = %d)", 
@@ -349,7 +350,7 @@ void CyberPowerProtocol::parse_present_status_report(const HidReport &report, Up
   }
 
   // Based on NUT debug logs - bit flags in first byte
-  uint8_t status_byte = report.data[1];
+  uint8_t status_byte = report.data[2];
   
   // Parse status bits (based on HID paths from debug)
   bool ac_present = (status_byte & 0x01) != 0;           // Offset 0
@@ -401,10 +402,10 @@ void CyberPowerProtocol::parse_input_voltage_report(const HidReport &report, Ups
     return;
   }
 
-  // NUT debug: Report 0x0f, Value: 231 (matches our 0x00E6 = 230)
+  // NUT debug: Report 0x0b, offset 24 
   // Data format: [ID, volt_low, volt_high] - 16-bit little endian
-  uint16_t voltage_raw = report.data[1] | (report.data[2] << 8);
-  // Input voltage is in volts directly, no scaling needed (unlike battery voltage)
+  uint8_t voltage_raw = report.data[4]; // Offset 24 bits = byte 3 + 1
+  // uint16_t voltage_raw = report.data[1] | (report.data[2] << 8);
   data.power.input_voltage = static_cast<float>(voltage_raw);
   
   ESP_LOGD(CP_TAG, "Input voltage: %.1fV (raw: 0x%02X%02X = %d)", 
@@ -417,10 +418,10 @@ void CyberPowerProtocol::parse_output_voltage_report(const HidReport &report, Up
     return;
   }
 
-  // NUT debug: Report 0x12, Value: 231 (matches our 0x00E6 = 230)
+  // NUT debug: Report 0x0b, offset 32
   // Data format: [ID, volt_low, volt_high] - 16-bit little endian  
-  uint16_t voltage_raw = report.data[1] | (report.data[2] << 8);
-  // Output voltage is in volts directly, no scaling needed (unlike battery voltage)
+  uint8_t voltage_raw = report.data[5]; // Offset 24 bits = byte 3 + 1
+  // uint16_t voltage_raw = report.data[1] | (report.data[2] << 8);
   data.power.output_voltage = static_cast<float>(voltage_raw);
   
   ESP_LOGD(CP_TAG, "Output voltage: %.1fV (raw: 0x%02X%02X = %d)", 
@@ -818,43 +819,43 @@ void CyberPowerProtocol::parse_serial_number_report(const HidReport &report, Ups
 void CyberPowerProtocol::read_missing_dynamic_values(UpsData &data) {
   ESP_LOGD(CP_TAG, "Reading CyberPower missing dynamic values from NUT analysis...");
   
-  // 1. Battery capacity limits (Report 0x07) - contains multiple values
-  HidReport battery_capacity_limits_report;
-  if (read_hid_report(0x07, battery_capacity_limits_report)) {
-    parse_battery_capacity_limits_report(battery_capacity_limits_report, data);
-  }
+  // // 1. Battery capacity limits (Report 0x07) - contains multiple values
+  // HidReport battery_capacity_limits_report;
+  // if (read_hid_report(0x07, battery_capacity_limits_report)) {
+  //   parse_battery_capacity_limits_report(battery_capacity_limits_report, data);
+  // }
   
-  // 2. Battery chemistry/type (shared report ID) - same as APC
-  HidReport battery_chemistry_report;
-  if (read_hid_report(battery_chemistry::REPORT_ID, battery_chemistry_report)) {
-    parse_battery_chemistry_report(battery_chemistry_report, data);
-  }
+  // // 2. Battery chemistry/type (shared report ID) - same as APC
+  // // HidReport battery_chemistry_report;
+  // // if (read_hid_report(battery_chemistry::REPORT_ID, battery_chemistry_report)) {
+  // //   parse_battery_chemistry_report(battery_chemistry_report, data);
+  // // }
   
-  // 3. Battery runtime low threshold is already available in existing Report 0x08
-  // It's at offset 24 and already parsed in parse_battery_runtime_report
-  // Just need to extract it properly
+  // // 3. Battery runtime low threshold is already available in existing Report 0x08
+  // // It's at offset 24 and already parsed in parse_battery_runtime_report
+  // // Just need to extract it properly
   
-  // 4. Try to read manufacturing date (based on NUT: UPS.PowerSummary.iOEMInformation)
-  // CyberPower manufacturing date might be in reports 0x04, 0x05, or similar to APC reports
-  std::vector<uint8_t> mfr_date_reports = {0x04, 0x05, 0x06, 0x19, 0x1c, 0x1d, 0x1e, 0x1f, 0x20};
-  for (uint8_t report_id : mfr_date_reports) {
-    HidReport mfr_date_report;
-    if (read_hid_report(report_id, mfr_date_report)) {
-      parse_manufacturing_date_report(mfr_date_report, data);
-      break; // Found manufacturing date, stop trying other reports
-    }
-  }
+  // // 4. Try to read manufacturing date (based on NUT: UPS.PowerSummary.iOEMInformation)
+  // // CyberPower manufacturing date might be in reports 0x04, 0x05, or similar to APC reports
+  // // std::vector<uint8_t> mfr_date_reports = {0x04, 0x05, 0x06, 0x19, 0x1c, 0x1d, 0x1e, 0x1f, 0x20};
+  // // for (uint8_t report_id : mfr_date_reports) {
+  // //   HidReport mfr_date_report;
+  // //   if (read_hid_report(report_id, mfr_date_report)) {
+  // //     parse_manufacturing_date_report(mfr_date_report, data);
+  // //     break; // Found manufacturing date, stop trying other reports
+  // //   }
+  // // }
   
-  // 5. Set static/derived values based on NUT behavior  
-  data.test.ups_test_result = test::RESULT_NO_TEST;  // Default test result
+  // // 5. Set static/derived values based on NUT behavior  
+  // data.test.ups_test_result = test::RESULT_NO_TEST;  // Default test result
   
-  // NOTE: battery_status is now properly set based on charging state in parse_present_status_report
+  // // NOTE: battery_status is now properly set based on charging state in parse_present_status_report
   
-  // 5. Timer values represent active countdown (negative when no countdown active)
-  // NUT shows: ups.timer.shutdown: -60, ups.timer.start: -60
-  data.test.timer_shutdown = -data.config.delay_shutdown;  // Negative indicates no active countdown
-  data.test.timer_start = -data.config.delay_start;        // Negative indicates no active countdown  
-  data.test.timer_reboot = defaults::REBOOT_TIMER_DEFAULT;  // CyberPower doesn't have separate reboot timer, use default
+  // // 5. Timer values represent active countdown (negative when no countdown active)
+  // // NUT shows: ups.timer.shutdown: -60, ups.timer.start: -60
+  // data.test.timer_shutdown = -data.config.delay_shutdown;  // Negative indicates no active countdown
+  // data.test.timer_start = -data.config.delay_start;        // Negative indicates no active countdown  
+  // data.test.timer_reboot = defaults::REBOOT_TIMER_DEFAULT;  // CyberPower doesn't have separate reboot timer, use default
   
   ESP_LOGD(CP_TAG, "Completed reading CyberPower missing dynamic values");
 }
@@ -875,6 +876,7 @@ void CyberPowerProtocol::parse_battery_capacity_limits_report(const HidReport &r
   // Offset 32: RemainingCapacityLimit = 10
   // Data format: [ID, byte1, byte2, byte3, byte4, byte5, ...]
   
+  // NOT CORRECT for OR1500LCDRM2U, instead at 0x05 offset 0 size 8
   // Extract warning capacity limit (offset 24 = byte 4)
   if (report.data.size() > 4) {
     uint8_t warning_limit = report.data[4]; // Offset 24 bits = byte 3 + 1
@@ -883,6 +885,7 @@ void CyberPowerProtocol::parse_battery_capacity_limits_report(const HidReport &r
              data.battery.charge_warning, warning_limit);
   }
   
+  // NOT CORRECT for OR1500LCDRM2U, instead at 0x06 offset 0 size 8
   // Extract remaining capacity limit (offset 32 = byte 5)
   if (report.data.size() > 5) {
     uint8_t remaining_limit = report.data[5]; // Offset 32 bits = byte 4 + 1
@@ -1180,12 +1183,12 @@ void CyberPowerProtocol::read_frequency_data(UpsData &data) {
   
   // Report IDs commonly used for frequency measurements:
   const std::vector<uint8_t> frequency_report_ids = {
-    HID_USAGE_POW_FREQUENCY,     // 0x32 - Standard HID frequency usage
-    HID_USAGE_POW_VOLTAGE,       // 0x30 - Input measurements (may include frequency)  
-    HID_USAGE_POW_CURRENT,       // 0x31 - Output measurements (may include frequency)
-    0x11, // CyberPower-specific frequency report (based on NUT analysis)
-    INPUT_VOLTAGE_REPORT_ID,     // 0x0F - might contain frequency data
-    OUTPUT_VOLTAGE_REPORT_ID,    // 0x12 - might contain frequency data
+    // HID_USAGE_POW_FREQUENCY,     // 0x32 - Standard HID frequency usage
+    // HID_USAGE_POW_VOLTAGE,       // 0x30 - Input measurements (may include frequency)  
+    // HID_USAGE_POW_CURRENT,       // 0x31 - Output measurements (may include frequency)
+    // 0x11, // CyberPower-specific frequency report (based on NUT analysis)
+    // INPUT_VOLTAGE_REPORT_ID,     // 0x0F - might contain frequency data
+    // OUTPUT_VOLTAGE_REPORT_ID,    // 0x12 - might contain frequency data
   };
   
   for (uint8_t report_id : frequency_report_ids) {
