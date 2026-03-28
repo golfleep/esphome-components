@@ -122,10 +122,10 @@ bool CyberPowerProtocol::read_data(UpsData &data) {
 
   // Additional sensors (enhance functionality)
   // Read battery voltage (Report 0x0b offset 0 size 16) 
-  HidReport battery_voltage_report;
-  if (read_hid_report(BATTERY_VOLTAGE_REPORT_ID, battery_voltage_report)) {
-    parse_battery_voltage_report(battery_voltage_report, data);
-  }
+  // HidReport battery_voltage_report;
+  // if (read_hid_report(BATTERY_VOLTAGE_REPORT_ID, battery_voltage_report)) {
+  //   parse_battery_voltage_report(battery_voltage_report, data);
+  // }
 
   // Read battery voltage nominal (Report 0x09)
   // HidReport battery_voltage_nominal_report;
@@ -175,10 +175,10 @@ bool CyberPowerProtocol::read_data(UpsData &data) {
   // }
 
   // Read beeper status (Report 0x0c)
-  HidReport beeper_status_report;
-  if (read_hid_report(BEEPER_STATUS_REPORT_ID, beeper_status_report)) {
-    parse_beeper_status_report(beeper_status_report, data);
-  }
+  // HidReport beeper_status_report;
+  // if (read_hid_report(BEEPER_STATUS_REPORT_ID, beeper_status_report)) {
+  //   parse_beeper_status_report(beeper_status_report, data);
+  // }
 
   // Read device info (Reports 0x02, 0x1b) - these are string descriptors
   // HidReport serial_number_report;
@@ -192,14 +192,14 @@ bool CyberPowerProtocol::read_data(UpsData &data) {
   // }
 
   // Read test result (Report 0x14) - same report ID used for test commands
-  HidReport test_result_report;
-  if (read_hid_report(TEST_RESULT_REPORT_ID, test_result_report)) {
-    parse_test_result_report(test_result_report, data);
-  }
+  // HidReport test_result_report;
+  // if (read_hid_report(TEST_RESULT_REPORT_ID, test_result_report)) {
+  //   parse_test_result_report(test_result_report, data);
+  // }
 
   // Set frequency to NaN - not available for CyberPower CP1500 model
   // Try to read frequency from HID reports
-  read_frequency_data(data);
+  // read_frequency_data(data);
   
   // TIMING FIX: Only read USB string descriptors after successful HID communication
   // This ensures the device is ready and responsive before attempting descriptor access
@@ -1326,60 +1326,60 @@ bool CyberPowerProtocol::read_timer_data(UpsData &data) {
   HidReport delay_start_report;
   bool success = false;
   
-  // Read delay shutdown report (timer countdown data)
-  if (read_hid_report(DELAY_SHUTDOWN_REPORT_ID, delay_shutdown_report)) {
-    // Parse the delay configuration (this updates data.config.delay_shutdown)
-    parse_delay_shutdown_report(delay_shutdown_report, data);
+  // // Read delay shutdown report (timer countdown data)
+  // if (read_hid_report(DELAY_SHUTDOWN_REPORT_ID, delay_shutdown_report)) {
+  //   // Parse the delay configuration (this updates data.config.delay_shutdown)
+  //   parse_delay_shutdown_report(delay_shutdown_report, data);
     
-    // For CyberPower, follow NUT behavior: timer shows negative of delay configuration during normal operation
-    // From CP_NUT_debug.md: ups.delay.shutdown: 60, ups.timer.shutdown: -60 (normal operation)
-    // During actual shutdown, the timer would show positive countdown values
+  //   // For CyberPower, follow NUT behavior: timer shows negative of delay configuration during normal operation
+  //   // From CP_NUT_debug.md: ups.delay.shutdown: 60, ups.timer.shutdown: -60 (normal operation)
+  //   // During actual shutdown, the timer would show positive countdown values
     
-    // In normal operation, CyberPower timers should be negative of the configured delay
-    if (data.config.delay_shutdown > 0) {
-      // Normal operation - timer is inactive, show negative of configuration value
-      data.test.timer_shutdown = -data.config.delay_shutdown;
-      ESP_LOGV(CP_TAG, "Timer shutdown inactive: %d (config: %d)", 
-               data.test.timer_shutdown, data.config.delay_shutdown);
-    } else {
-      // Use default if no configuration available
-      data.test.timer_shutdown = -defaults::CYBERPOWER_SHUTDOWN_DELAY_SEC;
-      ESP_LOGV(CP_TAG, "Timer shutdown inactive (default): %d", data.test.timer_shutdown);
-    }
+  //   // In normal operation, CyberPower timers should be negative of the configured delay
+  //   if (data.config.delay_shutdown > 0) {
+  //     // Normal operation - timer is inactive, show negative of configuration value
+  //     data.test.timer_shutdown = -data.config.delay_shutdown;
+  //     ESP_LOGV(CP_TAG, "Timer shutdown inactive: %d (config: %d)", 
+  //              data.test.timer_shutdown, data.config.delay_shutdown);
+  //   } else {
+  //     // Use default if no configuration available
+  //     data.test.timer_shutdown = -defaults::CYBERPOWER_SHUTDOWN_DELAY_SEC;
+  //     ESP_LOGV(CP_TAG, "Timer shutdown inactive (default): %d", data.test.timer_shutdown);
+  //   }
     
-    // TODO: During actual UPS shutdown, we would need to detect the active countdown state
-    // This would require monitoring for changing values or specific status indicators
-    // For now, we follow NUT's normal operation behavior
+  //   // TODO: During actual UPS shutdown, we would need to detect the active countdown state
+  //   // This would require monitoring for changing values or specific status indicators
+  //   // For now, we follow NUT's normal operation behavior
     
-    success = true;
-  }
+  //   success = true;
+  // }
   
-  // Read delay start report (timer countdown data)
-  if (read_hid_report(DELAY_START_REPORT_ID, delay_start_report)) {
-    // Parse the delay configuration (this updates data.config.delay_start)
-    parse_delay_start_report(delay_start_report, data);
+  // // Read delay start report (timer countdown data)
+  // if (read_hid_report(DELAY_START_REPORT_ID, delay_start_report)) {
+  //   // Parse the delay configuration (this updates data.config.delay_start)
+  //   parse_delay_start_report(delay_start_report, data);
     
-    // Follow same pattern as shutdown timer
-    if (data.config.delay_start > 0) {
-      // Normal operation - timer is inactive, show negative of configuration value
-      data.test.timer_start = -data.config.delay_start;
-      ESP_LOGV(CP_TAG, "Timer start inactive: %d (config: %d)", 
-               data.test.timer_start, data.config.delay_start);
-    } else {
-      // Use default if no configuration available
-      data.test.timer_start = -defaults::CYBERPOWER_STARTUP_DELAY_SEC;
-      ESP_LOGV(CP_TAG, "Timer start inactive (default): %d", data.test.timer_start);
-    }
-    success = true;
-  }
+  //   // Follow same pattern as shutdown timer
+  //   if (data.config.delay_start > 0) {
+  //     // Normal operation - timer is inactive, show negative of configuration value
+  //     data.test.timer_start = -data.config.delay_start;
+  //     ESP_LOGV(CP_TAG, "Timer start inactive: %d (config: %d)", 
+  //              data.test.timer_start, data.config.delay_start);
+  //   } else {
+  //     // Use default if no configuration available
+  //     data.test.timer_start = -defaults::CYBERPOWER_STARTUP_DELAY_SEC;
+  //     ESP_LOGV(CP_TAG, "Timer start inactive (default): %d", data.test.timer_start);
+  //   }
+  //   success = true;
+  // }
   
-  // CyberPower typically doesn't have a separate reboot timer, use shutdown timer
-  data.test.timer_reboot = data.test.timer_shutdown;
+  // // CyberPower typically doesn't have a separate reboot timer, use shutdown timer
+  // data.test.timer_reboot = data.test.timer_shutdown;
   
-  if (success) {
-    ESP_LOGD(CP_TAG, "CyberPower timer data updated - shutdown: %d, start: %d, reboot: %d",
-             data.test.timer_shutdown, data.test.timer_start, data.test.timer_reboot);
-  }
+  // if (success) {
+  //   ESP_LOGD(CP_TAG, "CyberPower timer data updated - shutdown: %d, start: %d, reboot: %d",
+  //            data.test.timer_shutdown, data.test.timer_start, data.test.timer_reboot);
+  // }
   
   return success;
 }
