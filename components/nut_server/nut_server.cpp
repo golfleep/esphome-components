@@ -243,7 +243,7 @@ void NutServerComponent::handle_client(NutClient &client) {
   } else if (bytes_received == 0) {
     // Client disconnected
     ESP_LOGD(TAG, "Client disconnected");
-    // disconnect_client(client);
+    disconnect_client(client);
   } else {
     if (errno != EWOULDBLOCK && errno != EAGAIN) {
       if (errno == ECONNRESET || errno == EPIPE) {
